@@ -17,5 +17,6 @@ __pycache__/
 
 # Code Spell
 .cspell.jsonc
+
 # data
 data/
