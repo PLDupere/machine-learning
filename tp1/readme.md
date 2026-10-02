@@ -5,4 +5,5 @@
 - pandas
 - matplotlib
 - scipy
-- Scikit-Learn 
+- Scikit-Learn
+- Scikit-Image
