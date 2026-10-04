@@ -20,3 +20,8 @@ __pycache__/
 
 # data
 data/
+
+# Rapport
+rapport/*
+!rapport/document.tex
+!rapport/document.pdf
