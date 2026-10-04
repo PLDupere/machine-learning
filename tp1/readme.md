@@ -7,3 +7,4 @@
 - scipy
 - Scikit-Learn
 - Scikit-Image
+- opencv-python
