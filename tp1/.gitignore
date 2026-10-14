@@ -23,5 +23,8 @@ data/
 
 # Rapport
 rapport/*
-!rapport/document.tex
-!rapport/document.pdf
+!rapport/report_v1.0.tex
+!rapport/report_v1.0.pdf
+
+# Résultats
+# result/*
