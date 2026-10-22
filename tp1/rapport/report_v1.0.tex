@@ -1,10 +1,13 @@
 \documentclass[12pt,twoside,letterpaper]{article}
 \usepackage[T1]{fontenc}
+\usepackage{tabularx}
+\usepackage{array}
+
 %NOTE: This report format is 
 
-\newcommand{\reporttitle}{{\huge \textsc{Rapport} \\ \vspace{0.5cm} {\Large Titre du projet}}}
+\newcommand{\reporttitle}{{\huge \textsc{Rapport} \\ \vspace{0.5cm} {\Large Travail pratique 1}}}
 
-\newcommand{\reportauthorOne}{Nom Prénom} % Remplacer par vos informations
+\newcommand{\reportauthorOne}{Pier-Luc Dupéré} % Remplacer par vos informations
 % \newcommand{\reportauthorTwo}{Student II}
 %\newcommand{\reportauthorThree}{Student III}
 % \newcommand{\cidOne}{your id number}
@@ -30,19 +33,162 @@
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Main document
+\section{Utilisatyion AI}
+pld
+
 \section{Choix, exploration et compréhension des données}
+Le projet OASIS[] met gratuitement à la disposition des chercheurs des données d'imagerie du 
+cerveau. On a utiliser la base de données OASIS 1 qui contient des images à résonance magnétique
+ayant été diagnostiquer pas des médecins professionnels. Dans cette base de données, on retrouve 
+le résultats des patients et qui sont classifier en 4 catégories. De plus, la base de données contient 
+d'autres informations et évaluations, comme les résultats de tests cognitifs et l'âge des patients etc.
+
 \newpage
 \section{Prétraitement et représentation des données}
+En ce qui concerne la préparation des données, on a extrait des coupes axial du cerveau de chaque 
+patients. Pour faire la sélection des tranches, on a utiliser un logiciel appeler XMedCon[]. On a
+pris 25 coupes par échantillon. Les coupes de 80 à 104 inclusivement de chaque fichier hdr.
+\newline
+
+Dans ce travail, seulement 15 échantillons pour chacune des trois catégories : 
+\begin{itemize}
+    \item Démence légère (Mild Demented)
+    \item Sans démence (Non Demented)
+    \item Démence très légère (Very Mild Demented)
+\end{itemize}
+
+Le code pré-traite une image IRM du cerveau. Il la convertit en niveaux de gris, applique un 
+flou gaussien, puis utilise le seuillage d:Otsu et des opérations morphologiques pour nettoyage
+de l'image. Il repère ensuite les contours situés dans la zone centrale afin de créer un masque 
+du cerveau. Ce masque est appliqué à l'image, puis la zone obtenue est recadrée et redimensionnée 
+en 128 × 128 pixels pour faciliter son analyse. On applique cela a tout les IRM et on sauvegarde le 
+tout sous forme de png. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/pretraitement.JPG}
+    \caption{Étapes du prétraitement des images IRM}
+    \label{fig:pretraitement}
+\end{figure}
+
+
 \newpage
 \section{Sélection / réduction de dimension}
+Le Local Binary Pattern (LBP) de la librairie scikit-image[] est utilisé afin de réduire et 
+sélectionner l'information des IRM. Cette fonction compare les pixels voisins au pixel central. 
+Cela forment un motif binaire qui représente la texture autour du pixel. On peut ensuite utiliser 
+les motifs obtenus pour générer un histogramme pour caractériser et classer les textures.
+Dans notre étude, la classification des textures revient à classer les échantillons selon leur catégorie.
+\newline
+
+Les parameters de la fonction sont les suivants:
+\begin{itemize}
+    \item P=8 (nombre de point)
+    \item R=3 (rayon)
+    \item method="default" (changements d'intensité en niveaux de gris sans rotations.)
+\end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/LBP.JPG}
+    \caption{À gauche : représentation de l'image LBP ; à droite : histogramme correspondant}
+    \label{fig:LBP}
+\end{figure}
+
+
+De plus, une réduction de dimension par analyse en composantes principales de type PCA est appliquée 
+aux données dans le pipeline[] d'execution. 
+
+Les parameters du PCA:
+\begin{itemize}
+    \item \texttt{n\_components=0.95} (\% de la variance des données conservée)
+    \item \texttt{svd\_solver=auto} (méthode de calcul utilisé)
+    \item \texttt{power\_iteration\_normalizer=auto}
+\end{itemize}
+
+
 \newpage
 \section{Compréhension et recherche sur l'algorithme}
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/SVM.JPG}
+    \caption{Pipeline réalise une classification avec un SVM}
+    \label{fig:SVM}
+\end{figure}
+
+standardise les caractéristiques pour qu'elles soient sur une échelle comparable.
+réduit le nombre de dimensions tout en conservant 95 \% de la variance des données.
+classe les échantillons à l'aide d'un SVM
+
+
+\begin{table}[htbp]
+    \centering
+    \caption{Principaux hyperparamètres d'un SVM}
+    \label{tab:hyperparametres-svm}
+    \begin{tabularx}{\textwidth}{
+        |>{\ttfamily}l
+        |X
+        |X
+        |>{\ttfamily}l|
+    }
+        \hline
+        \normalfont\textbf{Hyperparamètre} &
+        \textbf{Rôle} &
+        \textbf{Impact} &
+        \normalfont\textbf{Valeurs typiques} \\
+        \hline
+        kernel &
+        Type de noyau utilisé &
+        Détermine la forme de la frontière de décision &
+        \normalfont\texttt{linear}, \texttt{poly}, \texttt{rbf}, \texttt{sigmoid} \\
+        \hline
+
+        C &
+        Pénalisation des erreurs de classification &
+        Une faible valeur favorise une marge plus large et peut entraîner du sous-apprentissage ; une valeur élevée pénalise davantage les erreurs et peut favoriser le surapprentissage &
+        \normalfont{0.01 à 1000} \\
+        \hline
+
+        gamma &
+        Inverse du rayon d'influence, notamment pour le noyau RBF &
+        Une faible valeur produit une frontière plus lisse ; une valeur élevée peut la rendre plus complexe &
+        \normalfont{0.001 à 10.0} \\
+        \hline
+
+        degree &
+        Degré du polynôme utilisé par le noyau polynomial &
+        Un degré plus élevé permet une frontière de décision plus flexible &
+        \normalfont{2 à 5} \\
+        \hline
+
+        coef0 &
+        Terme constant des noyaux polynomial et sigmoid &
+        Influence la forme du noyau, notamment dans le cas du noyau polynomial &
+        \normalfont{0.0 à 1.0} \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+
 \newpage
 \section{Protocole de validation et métriques}
 \newpage
 \section{Présentation et interprétation des résultats}
 \newpage
 \section{Bilan critique de l'algorithme}
+Les méthodes à noyaux offrent une grande flexibilité et permettent de modéliser des 
+relations non linéaires, même avec des jeux de données de taille modérée. 
+Elles reposent aussi sur des bases théoriques solides et peuvent être adaptées 
+à différents types de données.
+
+
+Elles présentent toutefois des limites : leur coût de calcul augmente fortement 
+avec le nombre d'échantillons, leurs performances dépendent du réglage des 
+hyperparamètres et leurs décisions sont parfois difficiles à interpréter. 
+La prédiction peut aussi être lente, et l'obtention de probabilités nécessite 
+une étape de calibrage supplémentaire.
 
 \cite{ref_01}
 
