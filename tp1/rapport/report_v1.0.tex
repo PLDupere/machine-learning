@@ -7,12 +7,8 @@
 
 \newcommand{\reporttitle}{{\huge \textsc{Rapport} \\ \vspace{0.5cm} {\Large Travail pratique 1}}}
 
-\newcommand{\reportauthorOne}{Pier-Luc Dupéré} % Remplacer par vos informations
-% \newcommand{\reportauthorTwo}{Student II}
-%\newcommand{\reportauthorThree}{Student III}
-% \newcommand{\cidOne}{your id number}
+\newcommand{\reportauthorOne}{Pier-Luc Dupéré}
 \newcommand{\reportProfessor}{Yacine Yaddaden, Ph. D.}
-% \newcommand{\cidTwo}{your id number}
 \newcommand{\reporttype}{Coursework}
 \bibliographystyle{plain}
 
@@ -33,7 +29,7 @@
 \newpage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Main document
-\section{Utilisatyion AI}
+\section{Introduction}
 pld
 
 \section{Choix, exploration et compréhension des données}
@@ -118,14 +114,16 @@ Les parameters du PCA:
     \label{fig:SVM}
 \end{figure}
 
-standardise les caractéristiques pour qu'elles soient sur une échelle comparable.
-réduit le nombre de dimensions tout en conservant 95 \% de la variance des données.
-classe les échantillons à l'aide d'un SVM
+Dans l'image ci-dessus, on peut voir un pipeline qui standardise les caractéristiques et puis qui réduit 
+leur nombre en conservant 95 \% de la variance. Par la suite, on utilise un SVM pour classer les échantillons.
 
+Dans le tableau ci-dessous, il y a un résumé synthèse de tout les principale hyperparamètres. On peut voir 
+la fonction que chacun de chacun ainsi que leur effets sur l'hyperplan qui segmente les échantillons. De plus, 
+les valeurs typique qui vont être tester plus tard.
 
 \begin{table}[htbp]
     \centering
-    \caption{Principaux hyperparamètres d'un SVM}
+    \caption{Principaux hyperparamètres d'un SVM []}
     \label{tab:hyperparametres-svm}
     \begin{tabularx}{\textwidth}{
         |>{\ttfamily}l
@@ -135,9 +133,9 @@ classe les échantillons à l'aide d'un SVM
     }
         \hline
         \normalfont\textbf{Hyperparamètre} &
-        \textbf{Rôle} &
-        \textbf{Impact} &
-        \normalfont\textbf{Valeurs typiques} \\
+        \textbf{Fonction} &
+        \textbf{Effets} &
+        \normalfont\textbf{Valeurs} \\
         \hline
         kernel &
         Type de noyau utilisé &
@@ -148,7 +146,7 @@ classe les échantillons à l'aide d'un SVM
         C &
         Pénalisation des erreurs de classification &
         Une faible valeur favorise une marge plus large et peut entraîner du sous-apprentissage ; une valeur élevée pénalise davantage les erreurs et peut favoriser le surapprentissage &
-        \normalfont{0.01 à 1000} \\
+        \normalfont{0.01 à 100} \\
         \hline
 
         gamma &
@@ -174,8 +172,36 @@ classe les échantillons à l'aide d'un SVM
 
 \newpage
 \section{Protocole de validation et métriques}
+Afin de cherche la meilleure combinaison de paramètres pour un modèle. On a utiliser la librairie 
+GridSearchCV[]. Elle teste les combinaisons indiquées et évalue chacune avec une validation croisée, 
+puis sélectionne celle qui obtient le meilleur score.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{img/gridsearchcv.JPG}
+    \caption{Utilisation de GridSearchCV}
+    \label{fig:GridSearchCV}
+\end{figure}
+
+
+Pour chaque combinaison, GridSearchCV évalue les performances en validation croisée (cv), avec l'accuracy 
+comme mesure. Il teste chacune des combinaisons répétée pour les différentes validations croisées avec 
+StratifiedKFold[]. Cela signifie que chaque combinaison de paramètres sera évaluée sur ces 10 découpages, 
+puis comparée selon son accuracy moyenne.
+
+Après l'entrainment du model, on prend le meilleur résultat avec les meilleurs paramètres. 
+
+
+Pour finir, le meilleur modèle est évalué sur les données de test, qu'il n'a pas vues pendant 
+son entraînement. Il prédit la classe de chaque échantillon. Ces prédictions sont comparées 
+aux vraies classes pour calculer son exactitude et produire des documents afin de faciliter 
+l'analyse des performances du modèle sur les données de test.
 \newpage
 \section{Présentation et interprétation des résultats}
+
+
+
+
 \newpage
 \section{Bilan critique de l'algorithme}
 Les méthodes à noyaux offrent une grande flexibilité et permettent de modéliser des 
@@ -189,6 +215,12 @@ avec le nombre d'échantillons, leurs performances dépendent du réglage des
 hyperparamètres et leurs décisions sont parfois difficiles à interpréter. 
 La prédiction peut aussi être lente, et l'obtention de probabilités nécessite 
 une étape de calibrage supplémentaire.
+
+
+Les SVM peuvent souffrir de surapprentissage lorsque leur modèle est trop complexe, ou de 
+sous-apprentissage lorsqu'il est trop simple. Le réglage des hyperparamètres et la validation 
+croisée permettent de trouver un bon équilibre et d'améliorer leur capacité à généraliser à de 
+nouvelles données.
 
 \cite{ref_01}
 
