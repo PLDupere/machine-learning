@@ -2,15 +2,18 @@
 \usepackage[T1]{fontenc}
 \usepackage{tabularx}
 \usepackage{array}
+\usepackage{url}
+\usepackage[numbers,sort&compress]{natbib}
 
 %NOTE: This report format is 
 
-\newcommand{\reporttitle}{{\huge \textsc{Rapport} \\ \vspace{0.5cm} {\Large Travail pratique 1}}}
-
+\newcommand{\reporttitle}{{\huge \textsc{Rapport} \\ \vspace{0.5cm} {\Large Étude expérimentale d'un algorithme d'apprentissage supervisé (SVM)}}}
 \newcommand{\reportauthorOne}{Pier-Luc Dupéré}
 \newcommand{\reportProfessor}{Yacine Yaddaden, Ph. D.}
 \newcommand{\reporttype}{Coursework}
-\bibliographystyle{plain}
+
+\bibliographystyle{IEEEtran}
+\hbadness=10000
 
 % include files that load packages and define macros
 \input{includes} % various packages needed for maths etc.
@@ -30,10 +33,20 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% Main document
 \section{Introduction}
-pld
+Ce travail pratique étudie expérimentalement un algorithme d'apprentissage supervisé, le SVM, 
+appliqué à la classification d'images IRM. Il consiste à construire un pipeline complet, à analyser 
+les principaux paramètres du modèle et à évaluer son comportement au moyen de différentes expériences. 
+L'objectif est de comprendre et d'expliquer les résultats obtenus, au-delà de la seule recherche de 
+bonnes performances.\newline
+
+\section*{Notes}
+La rédaction et la mise en forme de ce document ont été réalisées avec LaTeX et 
+Visual Studio Code. Les outils de correction orthographique (Code Spell checker) et d'autocomplétion 
+(IntelliSense) ont été utilisés comme aide à la rédaction. Il peut donc y avoir une forme d'intelligence
+artificielle qui aide a la redaction.
 
 \section{Choix, exploration et compréhension des données}
-Le projet OASIS[] met gratuitement à la disposition des chercheurs des données d'imagerie du 
+Le projet OASIS\cite{noauthor_open_nodate} met gratuitement à la disposition des chercheurs des données d'imagerie du 
 cerveau. On a utiliser la base de données OASIS 1 qui contient des images à résonance magnétique
 ayant été diagnostiquer pas des médecins professionnels. Dans cette base de données, on retrouve 
 le résultats des patients et qui sont classifier en 4 catégories. De plus, la base de données contient 
@@ -42,7 +55,7 @@ d'autres informations et évaluations, comme les résultats de tests cognitifs e
 \newpage
 \section{Prétraitement et représentation des données}
 En ce qui concerne la préparation des données, on a extrait des coupes axial du cerveau de chaque 
-patients. Pour faire la sélection des tranches, on a utiliser un logiciel appeler XMedCon[]. On a
+patients. Pour faire la sélection des tranches, on a utiliser un logiciel appeler XMedCon\cite{noauthor_xmedcon_nodate}. On a
 pris 25 coupes par échantillon. Les coupes de 80 à 104 inclusivement de chaque fichier hdr.
 \newline
 
@@ -52,7 +65,7 @@ Dans ce travail, seulement 15 échantillons pour chacune des trois catégories :
     \item Sans démence (Non Demented)
     \item Démence très légère (Very Mild Demented)
 \end{itemize}
-
+\vspace{0.5\baselineskip}
 Le code pré-traite une image IRM du cerveau. Il la convertit en niveaux de gris, applique un 
 flou gaussien, puis utilise le seuillage d:Otsu et des opérations morphologiques pour nettoyage
 de l'image. Il repère ensuite les contours situés dans la zone centrale afin de créer un masque 
@@ -70,7 +83,7 @@ tout sous forme de png.
 
 \newpage
 \section{Sélection / réduction de dimension}
-Le Local Binary Pattern (LBP) de la librairie scikit-image[] est utilisé afin de réduire et 
+Le Local Binary Pattern (LBP) de la librairie scikit-image\cite{noauthor_local_nodate} est utilisé afin de réduire et 
 sélectionner l'information des IRM. Cette fonction compare les pixels voisins au pixel central. 
 Cela forment un motif binaire qui représente la texture autour du pixel. On peut ensuite utiliser 
 les motifs obtenus pour générer un histogramme pour caractériser et classer les textures.
@@ -93,7 +106,7 @@ Les parameters de la fonction sont les suivants:
 
 
 De plus, une réduction de dimension par analyse en composantes principales de type PCA est appliquée 
-aux données dans le pipeline[] d'execution. 
+aux données dans le pipeline\cite{noauthor_pipeline_nodate} d'execution. 
 
 Les parameters du PCA:
 \begin{itemize}
@@ -115,7 +128,7 @@ Les parameters du PCA:
 \end{figure}
 
 Dans l'image ci-dessus, on peut voir un pipeline qui standardise les caractéristiques et puis qui réduit 
-leur nombre en conservant 95 \% de la variance. Par la suite, on utilise un SVM pour classer les échantillons.
+leur nombre en conservant un pourcentage de la variance. Par la suite, on utilise un SVM pour classer les échantillons.
 
 Dans le tableau ci-dessous, il y a un résumé synthèse de tout les principale hyperparamètres. On peut voir 
 la fonction que chacun de chacun ainsi que leur effets sur l'hyperplan qui segmente les échantillons. De plus, 
@@ -123,7 +136,7 @@ les valeurs typique qui vont être tester plus tard.
 
 \begin{table}[htbp]
     \centering
-    \caption{Principaux hyperparamètres d'un SVM []}
+    \caption{Principaux hyperparamètres d'un SVM \cite{noauthor_svc_nodate}}
     \label{tab:hyperparametres-svm}
     \begin{tabularx}{\textwidth}{
         |>{\ttfamily}l
@@ -173,8 +186,8 @@ les valeurs typique qui vont être tester plus tard.
 \newpage
 \section{Protocole de validation et métriques}
 Afin de cherche la meilleure combinaison de paramètres pour un modèle. On a utiliser la librairie 
-GridSearchCV[]. Elle teste les combinaisons indiquées et évalue chacune avec une validation croisée, 
-puis sélectionne celle qui obtient le meilleur score.
+GridSearchCV\cite{noauthor_gridsearchcv_nodate}. Elle teste les combinaisons indiquées et évalue chacune 
+avec une validation croisée, puis sélectionne celle qui obtient le meilleur score.
 
 \begin{figure}[htbp]
     \centering
@@ -186,7 +199,7 @@ puis sélectionne celle qui obtient le meilleur score.
 
 Pour chaque combinaison, GridSearchCV évalue les performances en validation croisée (cv), avec l'accuracy 
 comme mesure. Il teste chacune des combinaisons répétée pour les différentes validations croisées avec 
-StratifiedKFold[]. Cela signifie que chaque combinaison de paramètres sera évaluée sur ces 10 découpages, 
+StratifiedKFold\cite{noauthor_stratifiedkfold_nodate}. Cela signifie que chaque combinaison de paramètres sera évaluée sur ces 10 découpages, 
 puis comparée selon son accuracy moyenne.
 
 Après l'entrainment du model, on prend le meilleur résultat avec les meilleurs paramètres. 
@@ -196,36 +209,250 @@ Pour finir, le meilleur modèle est évalué sur les données de test, qu'il n'a
 son entraînement. Il prédit la classe de chaque échantillon. Ces prédictions sont comparées 
 aux vraies classes pour calculer son exactitude et produire des documents afin de faciliter 
 l'analyse des performances du modèle sur les données de test.
-\newpage
+
 \section{Présentation et interprétation des résultats}
+\subsection{Noyau linéaire (linear)}
+\begin{figure}[htbp]
+    \centering
 
+    \includegraphics[width=0.68\textwidth]{img/score lineaire.JPG}
+    \hfill
+    \includegraphics[width=0.28\textwidth]{img/matrix_lineaire.JPG}
 
+    \par\vspace{0.5cm}
 
+    \includegraphics[width=\textwidth]{img/kernel-linear_C-0.1_PCA-0.8_courbes.png}
 
+    \caption{Résultats du noyau linéaire}
+    \label{fig:linear}
+\end{figure}
+
+La matrice de confusion montre que le modèle classe correctement 36 images
+\textit{Mild Demented}, 36 images \textit{Non Dementia} et 24 images
+\textit{Very Mild Demented}. Sur les 180 images évaluées, 96 sont correctement
+classées, ce qui correspond à une exactitude de 53,3\,\%.\newline\newline
+
+Le rapport de classification indique que la classe \textit{Non Dementia}
+obtient le meilleur F1-score (0,615), tandis que la classe
+\textit{Very Mild Demented} obtient le plus faible (0,440). Le F1-score macro
+est de 0,531 et le F1-score pondéré est de 0,535.
+\newline\newline
+
+La courbe ROC montre que le modèle distingue le mieux la classe \textit{Non Dementia} 
+(AUC = 0,830), suivie de \textit{Mild Demented} (0,730). 
+La classe \textit{Very Mild Demented} est la moins bien distinguée (0,639).\newline\newline
+
+La courbe précision-rappel confirme cette tendance : la moyenne de precision (AP) 
+est de 0,662 pour \textit{Non Dementia}, de 0,615 pour \textit{Mild Demented} et 
+de 0,411 pour \textit{Very Mild Demented}. Le modèle obtient donc ses meilleurs 
+résultats pour \textit{Non Dementia} et ses résultats les plus faibles pour 
+\textit{Very Mild Demented}.\newline\newline
+
+Les paramètres retenus pour le modèle SVM sont les suivants :
+\begin{itemize}
+    \item Noyau : linéaire (\textit{linear})
+    \item Paramètre de régularisation \(C\) : \(0{,}1\)
+    \item Variance conservée par la PCA : \(80\,\%\)
+\end{itemize}
+\vspace{0.5\baselineskip}
+Aucun paramètre \(\gamma\) ni \textit{coef0} n'est indiqué pour ce noyau.
+
+\newpage
+\subsection{Noyau polynomial (poly)}
+\begin{figure}[htbp]
+    \centering
+
+    \includegraphics[width=0.68\textwidth]{img/score poly.JPG}
+    \hfill
+    \includegraphics[width=0.28\textwidth]{img/matrix poly.JPG}
+
+    \par\vspace{0.5cm}
+
+    \includegraphics[width=\textwidth]{img/kernel-poly_C-2_PCA-0.99_gamma-auto_coef0-0.1_courbes.png}
+
+    \caption{Résultats du noyau polynomial}
+    \label{fig:polynomial}
+\end{figure}
+
+La matrice de confusion montre que le modèle classe correctement 56 images
+\textit{Mild Demented}, 54 images \textit{Non Dementia} et 41 images
+\textit{Very Mild Demented}. Sur les 180 images évaluées, 151 sont correctement
+classées, ce qui correspond à une exactitude de 83,9\,\%.\newline\newline
+
+Le rapport de classification indique que la classe \textit{Non Dementia}
+obtient le meilleur F1-score (0,9), tandis que la classe
+\textit{Very Mild Demented} obtient le plus faible (0,774). Le F1-score macro
+est de 0,836 et le F1-score pondéré est de 0,839.
+\newline\newline
+
+La courbe ROC montre que le modèle distingue le mieux la classe \textit{Non Dementia} 
+(AUC = 0,958), suivie de \textit{Mild Demented} (0,930). 
+La classe \textit{Very Mild Demented} est la moins bien distinguée (0,921).\newline\newline
+
+La courbe précision-rappel confirme cette tendance : la moyenne de precision (AP) 
+est de 0,933 pour \textit{Non Dementia}, de 0,884 pour \textit{Mild Demented} et 
+de 0,794 pour \textit{Very Mild Demented}. Le modèle obtient donc ses meilleurs 
+résultats pour \textit{Non Dementia} et ses résultats les plus faibles pour 
+\textit{Very Mild Demented}.\newline\newline
+
+Les paramètres retenus pour le modèle SVM sont les suivants :
+\begin{itemize}
+    \item Noyau : linéaire (\textit{linear})
+    \item Paramètre de régularisation \(C\) : \(0{,}1\)
+    \item Variance conservée par la PCA : \(80\,\%\)
+    \item Paramètre \(\gamma\) : \textit{auto}
+    \item Paramètre \textit{coef0} : \(0{,}1\)
+\end{itemize}
+\vspace{0.5\baselineskip}
+Les meilleurs résultats ont été obtenus avec les valeurs automatiques de
+\(\gamma\) (\textit{auto} et \textit{scale}), plutôt qu'avec les valeurs
+numériques prédéfinies.
+
+\newpage
+\subsection{Noyau RBF}
+\begin{figure}[htbp]
+    \centering
+
+    \includegraphics[width=0.68\textwidth]{img/score rbf.JPG}
+    \hfill
+    \includegraphics[width=0.28\textwidth]{img/matrix rbf.JPG}
+
+    \par\vspace{0.5cm}
+
+    \includegraphics[width=\textwidth]{img/kernel-rbf_C-2_PCA-0.8_gamma-auto_courbes.png}
+
+    \caption{Résultats du noyau RBF}
+    \label{fig:RBF}
+\end{figure}
+
+La matrice de confusion montre que le modèle classe correctement 55 images
+\textit{Mild Demented}, 52 images \textit{Non Dementia} et 38 images
+\textit{Very Mild Demented}. Sur les 180 images évaluées, 145 sont correctement
+classées, ce qui correspond à une exactitude de 80,6\,\%.\newline\newline
+
+Le rapport de classification indique que la classe \textit{Mild Demented}
+obtient le meilleur F1-score (0,833), tandis que la classe
+\textit{Very Mild Demented} obtient le plus faible (0,738). Le F1-score macro
+est de 0,801 et le F1-score pondéré est de 0,805.
+\newline\newline
+
+La courbe ROC montre que le modèle distingue le mieux la classe \textit{Non Dementia} 
+(AUC = 0,935), suivie de \textit{Mild Demented} (0,908). 
+La classe \textit{Very Mild Demented} est la moins bien distinguée (0,896).\newline\newline
+
+La courbe précision-rappel confirme cette tendance : la moyenne de precision (AP) 
+est de 0,885 pour \textit{Non Dementia}, de 0,879 pour \textit{Mild Demented} et 
+de 0,816 pour \textit{Very Mild Demented}. Le modèle obtient donc ses meilleurs 
+résultats pour \textit{Non Dementia} et ses résultats les plus faibles pour 
+\textit{Very Mild Demented}.\newline\newline
+
+Les paramètres retenus pour le modèle SVM sont les suivants :
+\begin{itemize}
+    \item Noyau : linéaire (\textit{RBF})
+    \item Paramètre de régularisation \(C\) : \(2{,}0\)
+    \item Variance conservée par la PCA : \(80\,\%\)
+    \item Paramètre \(\gamma\) : \textit{auto}
+\end{itemize}
+\vspace{0.5\baselineskip}
+
+Les meilleurs résultats ont été obtenus avec les valeurs automatiques de
+\(\gamma\) (\textit{auto} et \textit{scale}), plutôt qu'avec les valeurs
+numériques prédéfinies. Aucun paramètre \textit{coef0} n'est indiqué pour ce noyau.
+
+\newpage
+\subsection{Noyau sigmoïde (sigmoid)}
+\begin{figure}[htbp]
+    \centering
+
+    \includegraphics[width=0.68\textwidth]{img/score sigmoid.JPG}
+    \hfill
+    \includegraphics[width=0.28\textwidth]{img/matrix sigmoid.JPG}
+
+    \par\vspace{0.5cm}
+
+    \includegraphics[width=\textwidth]{img/kernel-sigmoid_C-0.5_PCA-0.9_courbes.png}
+
+    \caption{Résultats du noyau sigmoid}
+    \label{fig:sigmoid}
+\end{figure}
+
+La matrice de confusion montre que le modèle classe correctement 34 images
+\textit{Mild Demented}, 34 images \textit{Non Dementia} et 26 images
+\textit{Very Mild Demented}. Sur les 180 images évaluées, 151 sont correctement
+classées, ce qui correspond à une exactitude de 46,7\,\%.\newline\newline
+
+Le rapport de classification indique que la classe \textit{Non Dementia}
+obtient le meilleur F1-score (0,567), tandis que la classe
+\textit{Very Mild Demented} obtient le plus faible (0,491). Le F1-score macro
+est de 0,521 et le F1-score pondéré est de 0,523.
+\newline\newline
+
+La courbe ROC montre que le modèle distingue le mieux la classe \textit{Non Dementia} 
+(AUC = 0,800), suivie de \textit{Mild Demented} (0,713). 
+La classe \textit{Very Mild Demented} est la moins bien distinguée (0,641).\newline\newline
+
+La courbe précision-rappel confirme cette tendance : la moyenne de precision (AP) 
+est de 0,656 pour \textit{Non Dementia}, de 0,608 pour \textit{Mild Demented} et 
+de 0,414 pour \textit{Very Mild Demented}. Le modèle obtient donc ses meilleurs 
+résultats pour \textit{Non Dementia} et ses résultats les plus faibles pour 
+\textit{Very Mild Demented}.\newline\newline
+
+Les paramètres retenus pour le modèle SVM sont les suivants :
+\begin{itemize}
+    \item Noyau : linéaire (\textit{linear})
+    \item Paramètre de régularisation \(C\) : \(0{,}5\)
+    \item Variance conservée par la PCA : \(90\,\%\)
+    \item Paramètre \(\gamma\) : \textit{scale}
+    \item Paramètre \textit{coef0} : \(0{,}0\)
+\end{itemize}
+\vspace{0.5\baselineskip}
+Les meilleurs résultats ont été obtenus avec les valeurs automatiques de
+\(\gamma\) (\textit{auto} et \textit{scale}), plutôt qu'avec les valeurs
+numériques prédéfinies.
+
+\subsection{Analyses des résultats}
+Les résultats montrent que le choix du noyau influence fortement les performances du SVM. 
+Le noyau polynomial obtient les meilleurs résultats suivi du noyau RBF. Ces deux noyaux 
+distinguent mieux les classes que les noyaux linéaire et sigmoïde. Donc leur performances 
+restent modestes.\newline
+
+Pour les quatre modèles, la classe Very Mild Demented est la plus difficile à reconnaître. 
+Elle présente les scores les plus faibles, ce qui suggère une confusion plus importante avec 
+les autres classes. À l'inverse, la classe Non Dementia est généralement mieux distinguée. 
+même si le noyau RBF obtient son meilleur F1-score pour Mild Demented.\newline
+
+Parmi les modèles évalués avec la grille de paramètre définit dans le code, le noyau polynomial constitue le 
+meilleur choix. Cependant, une exploration supplémentaire sur les hyperparamètres serait 
+nécessaire pour choisir quelle est le meilleur noyau.\newline
 \newpage
 \section{Bilan critique de l'algorithme}
+
+
 Les méthodes à noyaux offrent une grande flexibilité et permettent de modéliser des 
 relations non linéaires, même avec des jeux de données de taille modérée. 
 Elles reposent aussi sur des bases théoriques solides et peuvent être adaptées 
-à différents types de données.
-
+à différents types de données.\newline
 
 Elles présentent toutefois des limites : leur coût de calcul augmente fortement 
 avec le nombre d'échantillons, leurs performances dépendent du réglage des 
 hyperparamètres et leurs décisions sont parfois difficiles à interpréter. 
 La prédiction peut aussi être lente, et l'obtention de probabilités nécessite 
-une étape de calibrage supplémentaire.
-
+une étape de calibrage supplémentaire.\newline
 
 Les SVM peuvent souffrir de surapprentissage lorsque leur modèle est trop complexe, ou de 
 sous-apprentissage lorsqu'il est trop simple. Le réglage des hyperparamètres et la validation 
 croisée permettent de trouver un bon équilibre et d'améliorer leur capacité à généraliser à de 
 nouvelles données.
 
-\cite{ref_01}
 
 \newpage
 \bibliography{report_v1.0}
-
-
+% \cite{NoteCours}
+% \cite{noauthor_open_nodate}
+% \cite{noauthor_xmedcon_nodate}
+% \cite{noauthor_local_nodate}
+% \cite{noauthor_pipeline_nodate}
+% \cite{noauthor_svc_nodate}
+% \cite{noauthor_gridsearchcv_nodate}
+% \cite{noauthor_stratifiedkfold_nodate}
 \end{document}
