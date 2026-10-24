@@ -4,6 +4,8 @@
 
 Ce travail pratique étudie expérimentalement un algorithme d’apprentissage supervisé, le SVM, appliqué à la classification d’images IRM. Il consiste à construire un pipeline complet, à analyser les principaux paramètres du modèle et à évaluer son comportement au moyen de différentes expériences. L’objectif est de comprendre et d’expliquer les résultats obtenus, au-delà de la seule recherche de bonnes performances.
 
+## Lien Git
+https://github.com/PLDupere/machine-learning
 
 ## Prérequis
 
